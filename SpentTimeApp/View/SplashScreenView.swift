@@ -49,7 +49,7 @@ struct SplashScreenView: View {
 private extension SplashScreenView {
     
     var logoCard: some View {
-        Image(.startLogo)
+        Image(.logo)
             .resizable()
             .scaledToFit()
             .padding(.horizontal, 24)
