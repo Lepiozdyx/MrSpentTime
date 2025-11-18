@@ -3,10 +3,8 @@ import Combine
 import FirebaseMessaging
 @preconcurrency import WebKit
 
-// MARK: - FCMManager
-
-class FCMManager: ObservableObject {
-    static let shared = FCMManager()
+class TokenManager: ObservableObject {
+    static let shared = TokenManager()
     
     @Published private(set) var fcmToken: String?
     private var continuation: CheckedContinuation<String, Never>?
@@ -31,13 +29,10 @@ class FCMManager: ObservableObject {
 }
 
 // MARK: - NetworkManager
-
 class NetworkManager: ObservableObject {
     @Published private(set) var targetURL: URL?
     
-    // MARK: CHANGE URL HERE
-    static let BASE_URL = "https://"
-    
+    static let BASE_URL = "https://mrspentim.com/open"
     private let storage: UserDefaults
     private var didSaveURL = false
     private let requestTimeout: TimeInterval = 5.0
@@ -115,7 +110,7 @@ class NetworkManager: ObservableObject {
     }
     
     func checkInitialURL() async throws -> Bool {
-        let fcmToken = await FCMManager.shared.waitForToken()
+        let fcmToken = await TokenManager.shared.waitForToken()
         let initialURL = Self.getInitialURL(fcmToken: fcmToken)
         
         let configuration = URLSessionConfiguration.default
@@ -160,7 +155,6 @@ class NetworkManager: ObservableObject {
 }
 
 // MARK: -  WebViewManager
-
 struct WebViewManager: UIViewRepresentable {
     let url: URL
     let webManager: NetworkManager

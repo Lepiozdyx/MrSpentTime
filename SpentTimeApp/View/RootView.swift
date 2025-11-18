@@ -3,7 +3,7 @@ import SwiftUI
 struct RootView: View {
     
     @StateObject private var state = AppStateManager()
-    @StateObject private var fcmManager = FCMManager.shared
+    @StateObject private var fcmManager = TokenManager.shared
         
     var body: some View {
         Group {

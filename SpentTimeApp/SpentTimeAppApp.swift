@@ -38,7 +38,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
             if let error = error {
-                print("Notifications error: \(error.localizedDescription)")
+                print(error.localizedDescription)
                 return
             }
             
@@ -47,23 +47,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             } else {
-                print("Notifications disabled by user")
+                print("Disabled by user")
             }
         }
     }
-    
-    // MARK: - Remote Notifications
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
         
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        print("token: \(token)")
+        print(token)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Failed to register for remote notifications: \(error.localizedDescription)")
+        print(error.localizedDescription)
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -80,8 +78,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
-// MARK: - MessagingDelegate
-
 extension AppDelegate: MessagingDelegate {
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
@@ -89,25 +85,23 @@ extension AppDelegate: MessagingDelegate {
             return
         }
         
-        let previousToken = FCMManager.shared.fcmToken
+        let previousToken = TokenManager.shared.fcmToken
         let isTokenChanged = previousToken != token
         
         if isTokenChanged {
             if let prev = previousToken {
-                print("Previous token: \(prev)")
-                print("New token: \(token)")
+                print(prev)
+                print(token)
             } else {
-                print("First time receiving token")
+                print("Receiving token")
             }
         } else {
-            print("Same token as before")
+            print("Same token")
         }
         
-        FCMManager.shared.setToken(token)
+        TokenManager.shared.setToken(token)
     }
 }
-
-// MARK: - UNUserNotificationCenterDelegate
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
@@ -127,15 +121,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         let userInfo = response.notification.request.content.userInfo
         let actionIdentifier = response.actionIdentifier
-        print("userNotificationCenter: \(actionIdentifier)")
+        print(actionIdentifier)
         
         switch response.actionIdentifier {
         case UNNotificationDefaultActionIdentifier:
-            print("Default action - notification tapped")
+            print("Notification tapped")
         case UNNotificationDismissActionIdentifier:
             print("Notification dismissed")
         default:
-            print("Custom action: \(response.actionIdentifier)")
+            print(response.actionIdentifier)
         }
         
         handlePushNotification(userInfo)

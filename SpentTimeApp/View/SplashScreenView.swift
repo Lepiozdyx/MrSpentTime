@@ -5,12 +5,6 @@ import SwiftUI
 struct SplashScreenView: View {
     @State private var progress: CGFloat = 0.0
     
-    let onFinished: (() -> Void)?
-    
-    init(onFinished: (() -> Void)? = nil) {
-        self.onFinished = onFinished
-    }
-    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -38,9 +32,6 @@ struct SplashScreenView: View {
                     .padding(.horizontal, 32)
                     .padding(.bottom, 40)
             }
-        }
-        .onAppear {
-            startAnimation()
         }
     }
 }
@@ -89,26 +80,14 @@ private extension SplashScreenView {
             }
         }
         .frame(height: 32)
-    }
-}
-
-
-private extension SplashScreenView {
-    func startAnimation() {
-        progress = 0
-        
-        withAnimation(.linear(duration: 2.2)) {
-            progress = 1.0
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
-            onFinished?()
+        .onAppear {
+            withAnimation(.linear(duration: 5)) {
+                progress = 1
+            }
         }
     }
 }
-
 
 #Preview {
     SplashScreenView()
-        .environmentObject(DataStore())
 }
